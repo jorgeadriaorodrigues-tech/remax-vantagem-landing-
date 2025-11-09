@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160" width="128" height="160">
+  <!-- Simple stylized balloon inspired by RE/MAX colors (no text) -->
+  <defs>
+    <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#e31e24"/>
+      <stop offset="0.5" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#003da5"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <ellipse cx="64" cy="56" rx="44" ry="52" fill="url(#g)" stroke="#c8c8c8" stroke-width="1" />
+    <path d="M54 108c0 6 10 14 10 14s10-8 10-14" fill="#7b7b7b" opacity="0.25" />
+    <rect x="58" y="118" width="12" height="18" rx="3" fill="#7b7b7b" />
+    <path d="M64 136 L64 152" stroke="#7b7b7b" stroke-width="2" stroke-linecap="round" />
+  </g>
+</svg>
