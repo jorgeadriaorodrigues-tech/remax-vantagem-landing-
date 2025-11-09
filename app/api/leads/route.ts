@@ -2,24 +2,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
+
 export const dynamic = "force-dynamic";
 
-const prisma = new PrismaClient();
-
 export async function POST(request: NextRequest) {
+  const prisma = new PrismaClient();
   try {
     const body = await request.json();
-    
     // Validate required fields
     const { nome, email, telefone } = body;
-    
     if (!nome?.trim() || !email?.trim() || !telefone?.trim()) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios" },
         { status: 400 }
       );
     }
-
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -28,7 +25,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     // Validate phone format (basic validation)
     const phoneRegex = /^[0-9\s\+\-\(\)]+$/;
     if (!phoneRegex.test(telefone)) {
@@ -37,7 +33,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
     // Create lead in database
     const lead = await prisma.lead.create({
       data: {
@@ -46,9 +41,7 @@ export async function POST(request: NextRequest) {
         telefone: telefone.trim(),
       },
     });
-
     console.log("New lead created:", lead);
-
     return NextResponse.json(
       { 
         message: "Lead criado com sucesso",
@@ -56,10 +49,8 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-
   } catch (error) {
     console.error("Error creating lead:", error);
-    
     return NextResponse.json(
       { error: "Erro interno do servidor. Tenta novamente." },
       { status: 500 }
