@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { toast } from "sonner";
 
 interface FormData {
   nome: string;
@@ -28,6 +27,9 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
+
+  // Substitua pelo seu endpoint do Formspree
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mblqrqvz";
 
   const validateForm = (): boolean => {
     const newErrors: Partial<FormData> = {};
@@ -56,46 +58,7 @@ export default function ContactForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      toast.error("Por favor, corrige os erros do formulário");
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response?.ok) {
-        throw new Error("Erro ao enviar formulário");
-      }
-
-      setIsSubmitted(true);
-      toast.success("Pedido enviado com sucesso! Entraremos em contacto em breve.");
-      
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setFormData({ nome: "", email: "", telefone: "", tipoPropriedade: "" });
-        setIsSubmitted(false);
-        setErrors({});
-      }, 3000);
-      
-    } catch (error) {
-      console.error("Erro ao submeter formulário:", error);
-      toast.error("Erro ao enviar formulário. Tenta novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // Removido handleSubmit, pois o envio será feito pelo próprio HTML do formulário
 
   const handleInputChange = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -245,7 +208,7 @@ export default function ContactForm() {
             viewport={{ once: true }}
           >
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form action={FORMSPREE_ENDPOINT} method="POST" className="space-y-6">
                 
                 {/* Nome Field */}
                 <div>
@@ -256,14 +219,11 @@ export default function ContactForm() {
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                     <Input
                       id="nome"
+                      name="nome"
                       type="text"
                       placeholder="O teu nome completo"
-                      value={formData.nome}
-                      onChange={handleInputChange("nome")}
-                      className={`pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                        errors.nome ? "border-red-300" : "border-slate-200"
-                      }`}
-                      disabled={isSubmitting}
+                      required
+                      className="pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 border-slate-200"
                     />
                     {errors.nome && (
                       <div className="flex items-center mt-2">
@@ -283,14 +243,11 @@ export default function ContactForm() {
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       placeholder="o.teu.email@exemplo.com"
-                      value={formData.email}
-                      onChange={handleInputChange("email")}
-                      className={`pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                        errors.email ? "border-red-300" : "border-slate-200"
-                      }`}
-                      disabled={isSubmitting}
+                      required
+                      className="pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 border-slate-200"
                     />
                     {errors.email && (
                       <div className="flex items-center mt-2">
@@ -310,14 +267,11 @@ export default function ContactForm() {
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                     <Input
                       id="telefone"
+                      name="telefone"
                       type="tel"
                       placeholder="+351 xxx xxx xxx"
-                      value={formData.telefone}
-                      onChange={handleInputChange("telefone")}
-                      className={`pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                        errors.telefone ? "border-red-300" : "border-slate-200"
-                      }`}
-                      disabled={isSubmitting}
+                      required
+                      className="pl-12 h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 border-slate-200"
                     />
                     {errors.telefone && (
                       <div className="flex items-center mt-2">
@@ -334,34 +288,19 @@ export default function ContactForm() {
                     Tens uma casa para vender? *
                   </Label>
                   <div className="mt-2">
-                    <Select
-                      value={formData.tipoPropriedade}
-                      onValueChange={(value) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          tipoPropriedade: value
-                        }));
-                        if (errors.tipoPropriedade) {
-                          setErrors(prev => ({
-                            ...prev,
-                            tipoPropriedade: undefined
-                          }));
-                        }
-                      }}
+                    <select
+                      id="tipoPropriedade"
+                      name="tipoPropriedade"
+                      required
+                      className="h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 border-slate-200 w-full px-3"
                     >
-                      <SelectTrigger className={`h-12 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                        errors.tipoPropriedade ? "border-red-300" : "border-slate-200"
-                      }`}>
-                        <SelectValue placeholder="Selecione uma opção" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="apartamento">Sim, tenho um apartamento</SelectItem>
-                        <SelectItem value="moradia">Sim, tenho uma moradia</SelectItem>
-                        <SelectItem value="terreno">Sim, tenho um terreno</SelectItem>
-                        <SelectItem value="comercial">Sim, tenho um espaço comercial</SelectItem>
-                        <SelectItem value="nao">Não, procuro comprar/alugar</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      <option value="" disabled selected>Selecione uma opção</option>
+                      <option value="apartamento">Sim, tenho um apartamento</option>
+                      <option value="moradia">Sim, tenho uma moradia</option>
+                      <option value="terreno">Sim, tenho um terreno</option>
+                      <option value="comercial">Sim, tenho um espaço comercial</option>
+                      <option value="nao">Não, procuro comprar/alugar</option>
+                    </select>
                     {errors.tipoPropriedade && (
                       <div className="flex items-center mt-2">
                         <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
@@ -375,20 +314,10 @@ export default function ContactForm() {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={isSubmitting}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white h-14 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white h-14 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                      A Enviar...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="mr-3 h-5 w-5" />
-                      Quero a Minha Consulta Gratuita
-                    </>
-                  )}
+                  <Send className="mr-3 h-5 w-5" />
+                  Quero a Minha Consulta Gratuita
                 </Button>
                 
                 <p className="text-xs text-slate-500 text-center mt-4">
