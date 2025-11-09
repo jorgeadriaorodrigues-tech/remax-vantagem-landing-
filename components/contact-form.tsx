@@ -77,10 +77,14 @@ export default function ContactForm() {
 
   if (isSubmitted) {
     return (
-      <section id="contact-form" className="py-20 bg-gradient-to-b from-slate-50 to-white">
+      <section id="contact-form" className="py-20 min-h-[60vh] flex items-center justify-center" style={{
+        backgroundImage: 'url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
         <div className="container mx-auto px-4 max-w-2xl">
           <motion.div
-            className="bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-200"
+            className="bg-white/90 rounded-2xl shadow-xl p-8 text-center border border-slate-200"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -89,25 +93,15 @@ export default function ContactForm() {
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 mb-4">
-              Pedido Enviado com Sucesso!
+              Obrigado!
             </h3>
             <p className="text-lg text-slate-600 mb-6">
-              Obrigado pelo teu interesse, <span className="font-semibold text-red-600">{formData.nome}</span>! 
-              Um dos nossos agentes especializados irá entrar em contacto contigo nas próximas 24 horas para discutir as tuas necessidades em detalhe.
+              O seu formulário foi enviado com sucesso.<br/>
+              Nossa equipe entrará em contato com você dentro de 24 horas.
             </p>
-              <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-sm text-slate-500">
-                  📧 Confirma o teu email: {formData.email}<br />
-                  📱 Contacto: {formData.telefone}<br />
-                  🏠 Tipo de Propriedade: {
-                    formData.tipoPropriedade === "apartamento" ? "Apartamento" :
-                    formData.tipoPropriedade === "moradia" ? "Moradia" :
-                    formData.tipoPropriedade === "terreno" ? "Terreno" :
-                    formData.tipoPropriedade === "comercial" ? "Espaço Comercial" :
-                    formData.tipoPropriedade === "nao" ? "Procura comprar/alugar" : ""
-                  }
-              </p>
-            </div>
+            <a href="#contact-form" className="inline-block mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition-all duration-300">
+              Voltar
+            </a>
           </motion.div>
         </div>
       </section>
